@@ -1,7 +1,9 @@
-// import 'package:audioplayers/audio_cache.dart';
+import 'package:app/presentation/widgets/custom_app_bar.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/presentation/screens/todays_currencies_screen.dart';
+import 'package:app/presentation/screens/todays_currencies_tab.dart';
+import 'package:app/presentation/widgets/bottom_padding.dart';
 import 'package:app/presentation/widgets/loading_indicator.dart';
 import 'package:app/presentation/widgets/tappable_currency_tile.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
@@ -9,7 +11,6 @@ import 'package:app/utilities/extensions/extensions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 
 class CurrencyCalculatorScreen extends StatefulWidget {
   @override
@@ -17,12 +18,12 @@ class CurrencyCalculatorScreen extends StatefulWidget {
 }
 
 class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
-  // AudioCache _audioCache;
+  late final _audioCache;
   late CurrencyCubit _currencyCubit;
 
   @override
   void initState() {
-    // _audioCache = new AudioCache();
+    _audioCache = new AudioCache();
     super.initState();
   }
 
@@ -35,48 +36,86 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
   @override
   void dispose() {
     _currencyCubit.close();
-    // _audioCache.clearCache();
+    _audioCache.clearCache();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Container(
-        color: Colors.white,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Flexible(
-              flex: 65,
-              child: buildCalculation(context),
-            ),
-            Flexible(
-              flex: 35,
-              child: buildButtonRows(),
-            ),
-          ],
-        ),
+    return StreamBuilder<int>(
+      initialData: 0,
+      stream: _currencyCubit.tabIndex$,
+      builder: (context, snapshot) {
+        final tabIndex = snapshot.data;
+
+        return Scaffold(
+          appBar: CustomAppBar(
+            height: kToolbarHeight + MediaQuery.of(context).padding.top,
+            child: _buildAppBar(),
+          ),
+          body: (tabIndex == 0) ? _buildBody() : TodaysCurrenciesTab(),
+        );
+      },
+    );
+  }
+
+  Widget _buildBody() {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Flexible(
+            flex: 65,
+            child: buildCalculation(context),
+          ),
+          Flexible(
+            flex: 35,
+            child: buildButtonRows(),
+          ),
+          BottomPadding(color: Colors.white),
+        ],
       ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar() {
-    final today = DateTime.now();
-    final formatter = DateFormat('dd.MM.yyy');
-    final formatted = formatter.format(today);
+  Widget _buildAppBar() {
+    return Padding(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 8.0, right: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          _buildTab(title: 'Kalkulyator', index: 0),
+          SizedBox(width: 8.0),
+          _buildTab(title: 'Məzənnələr', index: 1),
+        ],
+      ),
+    );
+  }
 
-    return AppBar(
-      title: Text('ManatX'),
-      centerTitle: true,
-      actions: <Widget>[
-        TextButton(
-          onPressed: () => Navigator.of(context).push(TodaysCurrenciesScreen(currencyCubit: _currencyCubit).route),
-          child: Text('$formatted', style: size14weight500.copyWith(color: Colors.white)),
+  Widget _buildTab({
+    required String title,
+    required int index,
+  }) {
+    final isCurrent = index == _currencyCubit.tabIndex;
+
+    return Expanded(
+      child: InkWell(
+        onTap: () => _currencyCubit.updateTabIndex(index),
+        child: Container(
+          height: 36.0,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(4.0),
+            color: isCurrent ? greenColor : Colors.white10,
+            border: Border.all(color: isCurrent ? greenColor : Colors.white10, width: 2.0),
+          ),
+          child: Text(
+            title.toString(),
+            style: (isCurrent ? size15weight500 : size15weight400).copyWith(color: Colors.white),
+          ),
         ),
-        SizedBox(width: 8.0),
-      ],
+      ),
     );
   }
 
@@ -95,9 +134,13 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
   }
 
   Widget buildChangeCurrenciesButton() {
-    return GestureDetector(
-      child: Icon(Icons.swap_vert, size: 35.0,  color: Colors.white),
-      onTap: _currencyCubit.swapCurrencies,
+    return CircleAvatar(
+      radius: 23.0,
+      backgroundColor: greenColor,
+      child: GestureDetector(
+        child: Icon(Icons.swap_vert, size: 32.0, color: Colors.white),
+        onTap: _currencyCubit.swapCurrencies,
+      ),
     );
   }
 
@@ -107,7 +150,7 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final currency = snapshot.data!;
-    
+
           return Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -119,9 +162,9 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
                       stream: _currencyCubit.convertedValue$,
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return Text('${snapshot.data!.asFormatted}', style: size20weight400.copyWith(color: Colors.white));
+                          return Text('${snapshot.data!.asFormatted}', style: size32weight400.copyWith(color: Colors.white));
                         }
-                      
+
                         return LoadingIndicator();
                       },
                     ),
@@ -135,7 +178,7 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
             ),
           );
         }
-    
+
         return LoadingIndicator();
       },
     );
@@ -147,7 +190,7 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final currency = snapshot.data!;
-    
+
           return Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -158,11 +201,16 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
                 ),
                 Expanded(
                   child: Center(
-                    child: StreamBuilder<int>(
+                    child: StreamBuilder<double>(
                       initialData: 0,
                       stream: _currencyCubit.typedValue$,
                       builder: (context, snapshot) {
-                        return Text('${snapshot.data!.asFormatted}', style: size20weight400.copyWith(color: Colors.white));
+                        return Container(
+                          decoration: BoxDecoration(
+                            border: Border(bottom: BorderSide(color: Colors.white70)),
+                          ),
+                          child: Text('${snapshot.data!.asFormatted}', style: size32weight400.copyWith(color: Colors.white)),
+                        );
                       },
                     ),
                   ),
@@ -172,17 +220,6 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
           );
         }
         return LoadingIndicator();
-      },
-    );
-  }
-
-  void showFailureDialog(String error) {
-    showCupertinoDialog(
-      context: context,
-      builder: (context) {
-        return CupertinoAlertDialog(
-          content: Text('$error'),
-        );
       },
     );
   }
@@ -314,12 +351,12 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
   }
 
   void playSound() {
-    // if (_currencyCubit.typedValue == 0) {
-    //   _audioCache.play('sounds/exceeded.mp3', volume: .1);
-    // } else if (_currencyCubit.typedValue < CurrencyCubit.max_input) {
-    //   _audioCache.play('sounds/key.mp3', volume: .1);
-    // } else {
-    //   _audioCache.play('sounds/exceeded.mp3', volume: .1);
-    // }
+    if (_currencyCubit.typedValue == 0) {
+      _audioCache.play('sounds/exceeded.mp3', volume: .1);
+    } else if (_currencyCubit.typedValue < CurrencyCubit.max_input) {
+      _audioCache.play('sounds/key.mp3', volume: .1);
+    } else {
+      _audioCache.play('sounds/exceeded.mp3', volume: .1);
+    }
   }
 }

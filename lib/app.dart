@@ -11,11 +11,11 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: AppConstants.app_name,
       theme: ThemeData(
-        textTheme: GoogleFonts.poppinsTextTheme(),
+        textTheme: GoogleFonts.interTextTheme(),
         primaryColor: primaryColor,
         appBarTheme: AppBarTheme(
           textTheme: TextTheme(
-            headline6: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 19.0)),
+            headline6: GoogleFonts.inter(textStyle: TextStyle(fontSize: 19.0)),
           ),
           color: primaryColor,
           elevation: 0,

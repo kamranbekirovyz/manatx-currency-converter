@@ -37,7 +37,9 @@ class SplashScreen extends StatelessWidget {
             Column(
               children: <Widget>[
                 // const SpinKitWanderingCubes(color: Colors.white),
-                CircularProgressIndicator(),
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
                 SizedBox(height: 30.0),
                 Text(
                   "Azərbaycan Mərkəzi Bankından məlumatlar toplanılır..",

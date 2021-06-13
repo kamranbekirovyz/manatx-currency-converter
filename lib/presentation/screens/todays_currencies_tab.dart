@@ -6,44 +6,50 @@ import 'package:app/presentation/widgets/loading_indicator.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class TodaysCurrenciesScreen extends StatelessWidget {
-  final CurrencyCubit currencyCubit;
+class TodaysCurrenciesTab extends StatefulWidget {
+  @override
+  _TodaysCurrenciesTabState createState() => _TodaysCurrenciesTabState();
+}
 
-  TodaysCurrenciesScreen({required this.currencyCubit});
+class _TodaysCurrenciesTabState extends State<TodaysCurrenciesTab> {
+  late final CurrencyCubit _cubit;
+
+  @override
+  void initState() { 
+    super.initState();
+    _cubit = BlocProvider.of<CurrencyCubit>(context);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: primaryColor,
-      appBar: buildAppBar(context),
-      body: buildBody(),
-    );
-  }
-
-  Widget buildBody() {
-    return Column(
-      children: [
-        buildSearchField(),
-        SizedBox(height: 8.0),
-        Expanded(
-          child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(
-              children: [
-                _buildList(),
-                BottomPadding(),
-              ],
+    // TODO: keyboard unfocus area
+    return Container(
+      color: primaryColor,
+      child: Column(
+        children: [
+          _buildSearchField(),
+          SizedBox(height: 8.0),
+          Expanded(
+            child: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  _buildList(),
+                  BottomPadding(),
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildList() {
     return StreamBuilder<List<CurrencyModel>>(
-      stream: currencyCubit.filteredList$,
+      stream: _cubit.filteredList$,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ListView.separated(
@@ -70,7 +76,7 @@ class TodaysCurrenciesScreen extends StatelessWidget {
       leading: IconButton(
         icon: Icon(Icons.arrow_back_ios, color: Colors.white),
         onPressed: () {
-          currencyCubit.updateFilter('');
+          _cubit.updateFilter('');
           Navigator.of(context).pop();
         },
       ),
@@ -78,7 +84,7 @@ class TodaysCurrenciesScreen extends StatelessWidget {
     );
   }
 
-  Widget buildSearchField() {
+  Widget _buildSearchField() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: CupertinoTextField(
@@ -92,7 +98,7 @@ class TodaysCurrenciesScreen extends StatelessWidget {
             color: Colors.black54,
           ),
         ),
-        onChanged: (value) => currencyCubit.updateFilter(value),
+        onChanged: (value) => _cubit.updateFilter(value),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
           borderRadius: BorderRadius.circular(5.0),

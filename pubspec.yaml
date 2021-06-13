@@ -26,6 +26,7 @@ dependencies:
   http: ^0.13.3
   connectivity: ^3.0.6
   google_fonts: any
+  audioplayers: ^0.19.0
 
 dev_dependencies:
   flutter_test:

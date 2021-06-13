@@ -20,7 +20,7 @@ class TappableCurrencyTile extends StatelessWidget {
       onTap: () => openCurrencyPicker(context: context, toCurrency: toCurrency),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 3.0, horizontal: 11.0),
-        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+        margin: const EdgeInsets.symmetric(horizontal: 8.0),
         decoration: BoxDecoration(
           color: Colors.white12,
           borderRadius: BorderRadius.circular(6.0),

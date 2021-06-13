@@ -23,20 +23,23 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
   final _fromCurrencyController = new BehaviorSubject<CurrencyModel>();
   final _toCurrencyController = new BehaviorSubject<CurrencyModel>();
-  final _typedValueController = new BehaviorSubject<int>.seeded(0);
+  final _typedValueController = new BehaviorSubject<double>.seeded(0);
   final _convertedValueController = new BehaviorSubject<double>.seeded(0);
   final _filteredListController = new BehaviorSubject<List<CurrencyModel>>.seeded([]);
+  final _tabIndexController = BehaviorSubject<int>.seeded(0);
 
   Stream<CurrencyModel> get fromCurrency$ => _fromCurrencyController.stream;
   Stream<CurrencyModel> get toCurrency$ => _toCurrencyController.stream;
-  Stream<int> get typedValue$ => _typedValueController.stream;
+  Stream<double> get typedValue$ => _typedValueController.stream;
   Stream<double> get convertedValue$ => _convertedValueController.stream;
   Stream<List<CurrencyModel>> get filteredList$ => _filteredListController.stream;
+  Stream<int> get tabIndex$ => _tabIndexController.stream;
 
-  int get typedValue => _typedValueController.value;
+  double get typedValue => _typedValueController.value;
   CurrencyModel get toCurrency => _toCurrencyController.value;
   CurrencyModel get fromCurrency => _fromCurrencyController.value;
   double get convertedValue => _convertedValueController.value;
+  int get tabIndex => _tabIndexController.value;
 
   void updateFromCurrencyByIndex(int value) {
     _fromCurrencyController.add(currencies.elementAt(value));
@@ -56,7 +59,11 @@ class CurrencyCubit extends Cubit<CurrencyState> {
   }
 
   void dropLastDigitFromTypedValue() {
-    _typedValueController.add((typedValue / 10).floor());
+    if (typedValue > 1) {
+      _typedValueController.add((typedValue / 10).floorToDouble());
+    } else {
+      _typedValueController.add(0);
+    }
     autoUpdateConversionValue();
   }
 
@@ -75,6 +82,10 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     final temp = fromCurrency;
     _fromCurrencyController.add(toCurrency);
     _toCurrencyController.add(temp);
+
+    final temp2 = typedValue;
+    _typedValueController.add(convertedValue);
+    _convertedValueController.add(temp2);
     autoUpdateConversionValue();
   }
 
@@ -83,18 +94,22 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     autoUpdateConversionValue();
   }
 
+  void updateTabIndex(int value) => _tabIndexController.add(value);
+
   @override
   Future<void> close() {
     _fromCurrencyController.close();
     _toCurrencyController.close();
     _typedValueController.close();
     _filteredListController.close();
+    _tabIndexController.close();
     _hiveService.close();
     return super.close();
   }
 
   Future<void> fetchCurrencies() async {
     try {
+      // TODO: show another state when there is no internet connection
       emit(CurrencyLoading());
       final formattedToday = DateFormat('dd.MM.yyyy').format(DateTime.now());
 
@@ -117,9 +132,10 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
       _fromCurrencyController.add(currencies.elementAt(1));
       _toCurrencyController.add(currencies[0]);
-      _typedValueController.add(1000);
+      _typedValueController.add(1);
       _convertedValueController.add(currencies.elementAt(1).value! * typedValue);
       _filteredListController.add(currencies);
+
       emit(CurrencyLoaded(currencies: currencies));
     } catch (e, s) {
       print(e);
