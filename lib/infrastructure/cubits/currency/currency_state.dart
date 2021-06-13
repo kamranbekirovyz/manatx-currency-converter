@@ -1,4 +1,4 @@
-part of 'currency_bloc.dart';
+part of 'currency_cubit.dart';
 
 abstract class CurrencyState extends Equatable {
   const CurrencyState();

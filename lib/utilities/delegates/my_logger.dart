@@ -38,11 +38,15 @@ class SimpleLogPrinter extends LogPrinter {
   }
 
   String _getMethodName() {
-    final currentStack = StackTrace.current;
-    final formattedStacktrace = _formatStackTrace(currentStack, 3);
-    final realFirstLine = formattedStacktrace.firstWhere((line) => line.contains(classType.toString()));
-    final methodName = realFirstLine.replaceAll('$classType.', '');
-    return methodName;
+    try {
+      final currentStack = StackTrace.current;
+      final formattedStacktrace = _formatStackTrace(currentStack, 3);
+      final realFirstLine = formattedStacktrace.firstWhere((line) => line.contains(classType.toString()));
+      final methodName = realFirstLine.replaceAll('$classType.', '');
+      return methodName;
+    } catch (e) {
+      return '';
+    }
   }
 }
 

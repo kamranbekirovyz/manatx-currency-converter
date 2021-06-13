@@ -24,6 +24,8 @@ dependencies:
   xml: ^5.1.2
   intl: ^0.17.0
   http: ^0.13.3
+  connectivity: ^3.0.6
+  google_fonts: any
 
 dev_dependencies:
   flutter_test:
@@ -34,13 +36,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
-
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
+  assets:
+    - assets/flags/
+    - assets/sounds/
