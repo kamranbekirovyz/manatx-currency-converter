@@ -1,3 +1,4 @@
+import 'package:app/infrastructure/locator.dart';
 import 'package:app/presentation/screens/root_screen.dart';
 import 'package:app/utilities/constants/app_constants.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
@@ -11,6 +12,7 @@ class App extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: AppConstants.app_name,
       theme: ThemeData(
+        
         textTheme: GoogleFonts.interTextTheme(),
         primaryColor: primaryColor,
         appBarTheme: AppBarTheme(
@@ -22,6 +24,7 @@ class App extends StatelessWidget {
         ),
       ),
       home: RootScreen(),
+      navigatorKey: locator<GlobalKey<NavigatorState>>(),
     );
   }
 }

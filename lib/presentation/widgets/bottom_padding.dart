@@ -4,17 +4,19 @@ import 'package:flutter/material.dart';
 
 class BottomPadding extends StatelessWidget {
   final Color? color;
+  final double defaultBottom;
 
   const BottomPadding({
     this.color,
+    this.defaultBottom = 16.0
   });
 
   bool get isAndroid => Platform.isAndroid;
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = isAndroid ? 16.0 : MediaQuery.of(context).padding.bottom;
-    final height = bottomPadding > 0 ? bottomPadding : 16.0;
+    final bottomPadding = isAndroid ? defaultBottom : MediaQuery.of(context).padding.bottom;
+    final height = bottomPadding > 0 ? bottomPadding : defaultBottom;
 
     return Container(
       height: height,

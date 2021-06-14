@@ -32,3 +32,5 @@ class CurrencyAlert extends CurrencyState {
   @override
   List<Object> get props => [message];
 }
+
+class CurrencyNoInternetConnection extends CurrencyState{}

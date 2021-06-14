@@ -14,7 +14,7 @@ class CurrencyListItem extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white10,
-        borderRadius: BorderRadius.circular(6.0),
+        borderRadius: BorderRadius.circular(4.0),
       ),
       child: ListTile(
         leading: Image.asset('assets/flags/${currency.code}.png', width: 40.0),

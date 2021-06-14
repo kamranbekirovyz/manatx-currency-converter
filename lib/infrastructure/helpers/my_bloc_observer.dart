@@ -1,4 +1,4 @@
-import 'package:app/utilities/delegates/my_logger.dart';
+import 'package:app/infrastructure/helpers/my_logger.dart';
 import 'package:bloc/bloc.dart';
 
 class MyBlocObserver extends BlocObserver {

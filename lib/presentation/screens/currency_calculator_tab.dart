@@ -1,8 +1,6 @@
-import 'package:app/presentation/widgets/custom_app_bar.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/presentation/screens/todays_currencies_tab.dart';
 import 'package:app/presentation/widgets/bottom_padding.dart';
 import 'package:app/presentation/widgets/loading_indicator.dart';
 import 'package:app/presentation/widgets/tappable_currency_tile.dart';
@@ -12,54 +10,24 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CurrencyCalculatorScreen extends StatefulWidget {
+class CurrencyCalculatorTab extends StatefulWidget {
   @override
-  _CurrencyCalculatorScreenState createState() => _CurrencyCalculatorScreenState();
+  _CurrencyCalculatorTabState createState() => _CurrencyCalculatorTabState();
 }
 
-class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
-  late final _audioCache;
-  late CurrencyCubit _currencyCubit;
+class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
+  late final AudioCache _audioCache;
+  late final CurrencyCubit _currencyCubit;
 
   @override
   void initState() {
-    _audioCache = new AudioCache();
+    _audioCache =  AudioCache();
+    _currencyCubit = BlocProvider.of<CurrencyCubit>(context);
     super.initState();
   }
 
   @override
-  void didChangeDependencies() {
-    _currencyCubit = BlocProvider.of<CurrencyCubit>(context);
-    super.didChangeDependencies();
-  }
-
-  @override
-  void dispose() {
-    _currencyCubit.close();
-    _audioCache.clearCache();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<int>(
-      initialData: 0,
-      stream: _currencyCubit.tabIndex$,
-      builder: (context, snapshot) {
-        final tabIndex = snapshot.data;
-
-        return Scaffold(
-          appBar: CustomAppBar(
-            height: kToolbarHeight + MediaQuery.of(context).padding.top,
-            child: _buildAppBar(),
-          ),
-          body: (tabIndex == 0) ? _buildBody() : TodaysCurrenciesTab(),
-        );
-      },
-    );
-  }
-
-  Widget _buildBody() {
     return Container(
       color: Colors.white,
       child: Column(
@@ -73,51 +41,14 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
             flex: 35,
             child: buildButtonRows(),
           ),
-          BottomPadding(color: Colors.white),
+          BottomPadding(color: Colors.white, defaultBottom: 0.0),
         ],
       ),
     );
   }
 
-  Widget _buildAppBar() {
-    return Padding(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top, left: 8.0, right: 8.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          _buildTab(title: 'Kalkulyator', index: 0),
-          SizedBox(width: 8.0),
-          _buildTab(title: 'Məzənnələr', index: 1),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildTab({
-    required String title,
-    required int index,
-  }) {
-    final isCurrent = index == _currencyCubit.tabIndex;
 
-    return Expanded(
-      child: InkWell(
-        onTap: () => _currencyCubit.updateTabIndex(index),
-        child: Container(
-          height: 36.0,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4.0),
-            color: isCurrent ? greenColor : Colors.white10,
-            border: Border.all(color: isCurrent ? greenColor : Colors.white10, width: 2.0),
-          ),
-          child: Text(
-            title.toString(),
-            style: (isCurrent ? size15weight500 : size15weight400).copyWith(color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget buildCalculation(BuildContext context) {
     return Container(
@@ -286,7 +217,7 @@ class _CurrencyCalculatorScreenState extends State<CurrencyCalculatorScreen> {
         child: Container(
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(4.0),
           ),
           margin: const EdgeInsets.all(5.0),
           width: MediaQuery.of(context).size.width / 3,

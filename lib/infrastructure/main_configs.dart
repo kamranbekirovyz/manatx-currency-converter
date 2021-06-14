@@ -1,5 +1,5 @@
 import 'package:app/infrastructure/locator.dart';
-import 'package:app/utilities/delegates/my_bloc_observer.dart';
+import 'package:app/infrastructure/helpers/my_bloc_observer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';

@@ -1,5 +1,5 @@
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/utilities/delegates/my_logger.dart';
+import 'package:app/infrastructure/helpers/my_logger.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 

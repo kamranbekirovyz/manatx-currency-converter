@@ -101,7 +101,7 @@ class _TodaysCurrenciesTabState extends State<TodaysCurrenciesTab> {
         onChanged: (value) => _cubit.updateFilter(value),
         decoration: BoxDecoration(
           color: Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(5.0),
+          borderRadius: BorderRadius.circular(4.0),
         ),
       ),
     );

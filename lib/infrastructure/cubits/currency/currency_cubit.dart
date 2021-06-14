@@ -1,8 +1,10 @@
+import 'dart:io';
+
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
 import 'package:app/infrastructure/locator.dart';
 import 'package:app/infrastructure/repositories/currency_repository.dart';
 import 'package:app/infrastructure/services/hive_service.dart';
-import 'package:app/utilities/delegates/my_logger.dart';
+import 'package:app/infrastructure/helpers/my_logger.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:intl/intl.dart';
@@ -109,7 +111,6 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
   Future<void> fetchCurrencies() async {
     try {
-      // TODO: show another state when there is no internet connection
       emit(CurrencyLoading());
       final formattedToday = DateFormat('dd.MM.yyyy').format(DateTime.now());
 
@@ -137,7 +138,12 @@ class CurrencyCubit extends Cubit<CurrencyState> {
       _filteredListController.add(currencies);
 
       emit(CurrencyLoaded(currencies: currencies));
-    } catch (e, s) {
+    } on SocketException {
+      await Future.delayed(const Duration(seconds: 1));
+      emit(CurrencyNoInternetConnection());
+    }
+    
+    catch (e, s) {
       print(e);
       print(s);
       emit(CurrencyAlert(message: '$e'));
