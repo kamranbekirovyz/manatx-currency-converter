@@ -4,8 +4,7 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HiveService {
-  late Box<dynamic> prefsBox;
-  late Box<CurrencyModelAdapter> currencyBox;
+  late Box currencyBox;
 
   Future<void> init() async {
     final directory = await getApplicationDocumentsDirectory();
@@ -14,16 +13,17 @@ class HiveService {
     Hive.init(path);
     Hive.registerAdapter(CurrencyModelAdapter());
     currencyBox = await Hive.openBox('currency_box');
-    prefsBox = await Hive.openBox('preferences_box');
 
     simpleLogger.i('HiveService initialized');
   }
 
-  Future<void> storeLastCacheDate(String date) => prefsBox.put('last_cached_date', date);
-  String get lastCacheDate => prefsBox.get('last_cached_date');
-
-  Future<void> storeCurrencies(List<CurrencyModel> value) => prefsBox.putAt(0, value);
-  List<CurrencyModel> get currencies => currencyBox.getAt(0) as List<CurrencyModel>;
+  Future<void> storeCurrenciesByDate(String date, List<CurrencyModel> value) async {
+    print('Caching date: $date');
+    return await currencyBox.put(date, value);
+  }
+  dynamic getCachedCurrencieByDate(String date) =>currencyBox.get(date, defaultValue: <CurrencyModel>[]);
+  bool isDateCached(String date) => currencyBox.containsKey(date);
+  Future<void> removeCachedDataForDate(String date) => currencyBox.delete(date);
 
   void close() {
     Hive.close();

@@ -17,6 +17,7 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
   HiveService get _hiveService => locator<HiveService>();
   CurrencyRepository get _currencyRepository => locator<CurrencyRepository>();
+  String get formattedDate => DateFormat('dd.MM.yyyy').format(date);
 
   final List<CurrencyModel> currencies = [
     new CurrencyModel(code: 'AZN', value: 1.0, name: 'Azərbaycan Manatı', nominal: 1),
@@ -29,6 +30,7 @@ class CurrencyCubit extends Cubit<CurrencyState> {
   final _convertedValueController = new BehaviorSubject<double>.seeded(0);
   final _filteredListController = new BehaviorSubject<List<CurrencyModel>>.seeded([]);
   final _tabIndexController = BehaviorSubject<int>.seeded(0);
+  final _dateController = BehaviorSubject<DateTime>.seeded(DateTime.now());
 
   Stream<CurrencyModel> get fromCurrency$ => _fromCurrencyController.stream;
   Stream<CurrencyModel> get toCurrency$ => _toCurrencyController.stream;
@@ -36,12 +38,14 @@ class CurrencyCubit extends Cubit<CurrencyState> {
   Stream<double> get convertedValue$ => _convertedValueController.stream;
   Stream<List<CurrencyModel>> get filteredList$ => _filteredListController.stream;
   Stream<int> get tabIndex$ => _tabIndexController.stream;
+  Stream<DateTime> get date$ => _dateController.stream;
 
   double get typedValue => _typedValueController.value;
   CurrencyModel get toCurrency => _toCurrencyController.value;
   CurrencyModel get fromCurrency => _fromCurrencyController.value;
   double get convertedValue => _convertedValueController.value;
   int get tabIndex => _tabIndexController.value;
+  DateTime get date => _dateController.value;
 
   void updateFromCurrencyByIndex(int value) {
     _fromCurrencyController.add(currencies.elementAt(value));
@@ -97,6 +101,7 @@ class CurrencyCubit extends Cubit<CurrencyState> {
   }
 
   void updateTabIndex(int value) => _tabIndexController.add(value);
+  void updateDate(DateTime value) => _dateController.add(value);
 
   @override
   Future<void> close() {
@@ -106,28 +111,26 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     _filteredListController.close();
     _tabIndexController.close();
     _hiveService.close();
+    _dateController.close();
     return super.close();
   }
 
   Future<void> fetchCurrencies() async {
     try {
       emit(CurrencyLoading());
-      final formattedToday = DateFormat('dd.MM.yyyy').format(DateTime.now());
 
-      if (_hiveService.currencyBox.isNotEmpty && _hiveService.lastCacheDate == formattedToday) {
+      if (_hiveService.isDateCached(formattedDate)) {
         simpleLogger.d('Getting cached data from Hive');
 
-        final currenciesHistory = _hiveService.currencies;
-        currencies.addAll(currenciesHistory);
+        final currenciesHistory = _hiveService.getCachedCurrencieByDate(formattedDate);
         currenciesHistory.forEach(currencies.add);
         currencies.removeAt(0);
       } else {
         simpleLogger.d('Getting from API');
 
-        final response = await _currencyRepository.fetchCurrencies(formattedToday);
+        final response = await _currencyRepository.fetchCurrencies(formattedDate);
 
-        _hiveService.storeLastCacheDate(formattedToday);
-        _hiveService.storeCurrencies(response);
+        await _hiveService.storeCurrenciesByDate(formattedDate, response);
         currencies.addAll(response);
       }
 
@@ -141,9 +144,7 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     } on SocketException {
       await Future.delayed(const Duration(seconds: 1));
       emit(CurrencyNoInternetConnection());
-    }
-    
-    catch (e, s) {
+    } catch (e, s) {
       print(e);
       print(s);
       emit(CurrencyAlert(message: '$e'));

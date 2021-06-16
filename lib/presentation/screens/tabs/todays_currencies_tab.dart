@@ -1,8 +1,8 @@
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/presentation/widgets/bottom_padding.dart';
-import 'package:app/presentation/widgets/currency_list_item.dart';
-import 'package:app/presentation/widgets/loading_indicator.dart';
+import 'package:app/presentation/widgets/common/bottom_padding.dart';
+import 'package:app/presentation/widgets/items/currency_list_item.dart';
+import 'package:app/presentation/widgets/common/loading_indicator.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +62,7 @@ class _TodaysCurrenciesTabState extends State<TodaysCurrenciesTab> {
 
               return CurrencyListItem(snapshot.data!.elementAt(position));
             },
-            separatorBuilder: (_, __) => SizedBox(height: 6.0), 
+            separatorBuilder: (_, __) => SizedBox(height: 4.0), 
           );
         }
 

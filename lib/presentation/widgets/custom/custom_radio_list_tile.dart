@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class CustomRadioListTile extends StatelessWidget {
   final CurrencyModel currency;
-  final Function onTap;
+  final Function? onTap;
   final bool flag;
 
   const CustomRadioListTile({
@@ -23,9 +23,7 @@ class CustomRadioListTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(4.0),
       ),
       child: ListTile(
-        onTap: () {
-          Navigator.of(context).pop();
-        },
+        onTap: () => onTap?.call(),
         leading: Image.asset('assets/flags/${currency.code}.png', width: 40.0),
         title: Text('${currency.name} (${currency.code})'),
         trailing: Icon(

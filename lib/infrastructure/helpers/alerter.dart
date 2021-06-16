@@ -21,7 +21,11 @@ class Alerter {
           enableDrag: true,
           horizontalDismissDirection: HorizontalDismissDirection.startToEnd,
           child: FlashBar(
-            message: Text('$message', textAlign: TextAlign.center, style: size15weight400.copyWith(color: Colors.white)),
+            message: Text(
+              '$message',
+              textAlign: TextAlign.center,
+              style: size15weight400.copyWith(color: Colors.white),
+            ),
           ),
         );
       },

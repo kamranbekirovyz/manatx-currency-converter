@@ -28,6 +28,7 @@ dependencies:
   google_fonts: any
   audioplayers: ^0.19.0
   flash: ^1.5.1
+  calendar_timeline: ^1.0.1-null-safety.0
 
 dev_dependencies:
   flutter_test:

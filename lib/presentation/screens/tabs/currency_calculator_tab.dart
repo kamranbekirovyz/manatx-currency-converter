@@ -1,9 +1,9 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/presentation/widgets/bottom_padding.dart';
-import 'package:app/presentation/widgets/loading_indicator.dart';
-import 'package:app/presentation/widgets/tappable_currency_tile.dart';
+import 'package:app/presentation/widgets/common/bottom_padding.dart';
+import 'package:app/presentation/widgets/common/loading_indicator.dart';
+import 'package:app/presentation/widgets/unique/tappable_currency_tile.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:app/utilities/extensions/extensions.dart';
 import 'package:flutter/cupertino.dart';
@@ -21,7 +21,7 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
 
   @override
   void initState() {
-    _audioCache =  AudioCache();
+    _audioCache = AudioCache();
     _currencyCubit = BlocProvider.of<CurrencyCubit>(context);
     super.initState();
   }
@@ -47,24 +47,21 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
     );
   }
 
-
-
-
   Widget buildCalculation(BuildContext context) {
     return Container(
       padding: const EdgeInsetsDirectional.only(bottom: 10.0),
       color: primaryColor,
       child: Column(
         children: <Widget>[
-          buildFromCurrency(),
-          buildChangeCurrenciesButton(),
-          buildToCurrency(),
+          _buildFromCurrency(),
+          _buildChangeCurrenciesButton(),
+          _buildToCurrency(),
         ],
       ),
     );
   }
 
-  Widget buildChangeCurrenciesButton() {
+  Widget _buildChangeCurrenciesButton() {
     return CircleAvatar(
       radius: 23.0,
       backgroundColor: greenColor,
@@ -75,82 +72,82 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
     );
   }
 
-  Widget buildToCurrency() {
+  Widget _buildToCurrency() {
     return StreamBuilder<CurrencyModel>(
       stream: _currencyCubit.toCurrency$,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final currency = snapshot.data!;
+        final currency = snapshot.data;
 
-          return Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Expanded(
-                  child: Center(
-                    child: StreamBuilder<double>(
-                      initialData: 0.0,
-                      stream: _currencyCubit.convertedValue$,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Text('${snapshot.data!.asFormatted}', style: size32weight400.copyWith(color: Colors.white));
-                        }
-
-                        return LoadingIndicator();
-                      },
-                    ),
+        return Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              Expanded(
+                child: Center(
+                  child: StreamBuilder<double>(
+                    initialData: 0.0,
+                    stream: _currencyCubit.convertedValue$,
+                    builder: (context, snapshot) {
+                      return AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 150),
+                        transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(
+                          scale: animation,
+                          child: child,
+                        ),
+                        child: Text(
+                          '${(snapshot.data ?? 0).asFormatted}',
+                          style: size32weight400.copyWith(color: Colors.white),
+                          key: UniqueKey(),
+                        ),
+                      );
+                    },
                   ),
                 ),
-                TappableCurrencyTile(
-                  currency: currency,
-                  toCurrency: true,
-                ),
-              ],
-            ),
-          );
-        }
-
-        return LoadingIndicator();
+              ),
+              TappableCurrencyTile(
+                currency: currency,
+                toCurrency: true,
+              ),
+            ],
+          ),
+        );
       },
     );
   }
 
-  Widget buildFromCurrency() {
+  Widget _buildFromCurrency() {
     return StreamBuilder<CurrencyModel>(
       stream: _currencyCubit.fromCurrency$,
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final currency = snapshot.data!;
+        final currency = snapshot.data;
 
-          return Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                TappableCurrencyTile(
-                  currency: currency,
-                  toCurrency: false,
-                ),
-                Expanded(
-                  child: Center(
-                    child: StreamBuilder<double>(
-                      initialData: 0,
-                      stream: _currencyCubit.typedValue$,
-                      builder: (context, snapshot) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            border: Border(bottom: BorderSide(color: Colors.white70)),
-                          ),
-                          child: Text('${snapshot.data!.asFormatted}', style: size32weight400.copyWith(color: Colors.white)),
-                        );
-                      },
-                    ),
+        return Expanded(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              TappableCurrencyTile(
+                currency: currency,
+                toCurrency: false,
+              ),
+              Expanded(
+                child: Center(
+                  child: StreamBuilder<double>(
+                    initialData: 0,
+                    stream: _currencyCubit.typedValue$,
+                    builder: (context, snapshot) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(color: Colors.white70)),
+                        ),
+                        child: Text('${(snapshot.data ?? 0).asFormatted}', style: size32weight400.copyWith(color: Colors.white)),
+                      );
+                    },
                   ),
                 ),
-              ],
-            ),
-          );
-        }
-        return LoadingIndicator();
+              ),
+            ],
+          ),
+        );
       },
     );
   }

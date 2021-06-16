@@ -1,7 +1,7 @@
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/locator.dart';
 import 'package:app/infrastructure/services/connectivity_service.dart';
-import 'package:app/presentation/widgets/bottom_padding.dart';
+import 'package:app/presentation/widgets/common/bottom_padding.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
