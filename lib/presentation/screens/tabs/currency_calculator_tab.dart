@@ -2,7 +2,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
 import 'package:app/presentation/widgets/common/bottom_padding.dart';
-import 'package:app/presentation/widgets/common/loading_indicator.dart';
 import 'package:app/presentation/widgets/unique/tappable_currency_tile.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:app/utilities/extensions/extensions.dart';
