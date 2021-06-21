@@ -1,8 +1,6 @@
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/presentation/widgets/animations/slide_right_to_left.dart';
 import 'package:app/presentation/widgets/custom/custom_radio_list_tile.dart';
-import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +21,7 @@ class SelectCurrencyModal extends StatefulWidget {
 class _SelectCurrencyModalState extends State<SelectCurrencyModal> {
   final List<CurrencyModel> _currencies = [];
   final _animatedListKey = GlobalKey<AnimatedListState>();
+  final _offset = Tween(begin: Offset(1.0, 0), end: Offset(0.0, 0.0));
 
   @override
   void initState() {
@@ -59,8 +58,8 @@ class _SelectCurrencyModalState extends State<SelectCurrencyModal> {
       shrinkWrap: true,
       key: _animatedListKey,
       initialItemCount: _currencies.length,
-      itemBuilder: (context, posit, animation) {
-        final currency = _currencies.elementAt(posit);
+      itemBuilder: (_, int index, Animation<double> animation) {
+        final currency = _currencies.elementAt(index);
 
         bool flag;
         if (widget._toCurrency) {
@@ -68,17 +67,22 @@ class _SelectCurrencyModalState extends State<SelectCurrencyModal> {
         } else {
           flag = widget._cubit.fromCurrency.code == currency.code;
         }
-        return SlideRightToLeft(
-          child: CustomRadioListTile(
-            onTap: () {
-              Navigator.of(context).pop();
-              widget._toCurrency ? widget._cubit.updateToCurrencyByIndex(posit) : widget._cubit.updateFromCurrencyByIndex(posit);
-            },
-            currency: currency,
-            flag: flag,
-          ),
-        );
+        return _buildCurrencyItem(animation, index, currency, flag);
       },
+    );
+  }
+
+  Widget _buildCurrencyItem(Animation<double> animation, int index, CurrencyModel currency, bool flag) {
+    return SlideTransition(
+      position: animation.drive(_offset),
+      child: CustomRadioListTile(
+        onTap: () {
+          Navigator.of(context).pop();
+          widget._toCurrency ? widget._cubit.updateToCurrencyByIndex(index) : widget._cubit.updateFromCurrencyByIndex(index);
+        },
+        currency: currency,
+        flag: flag,
+      ),
     );
   }
 }
