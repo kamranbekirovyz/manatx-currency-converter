@@ -1,4 +1,5 @@
 import 'package:app/infrastructure/helpers/alerter.dart';
+import 'package:app/infrastructure/helpers/my_logger.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -16,15 +17,11 @@ class ConnectivityService {
 
   void listenForOffline() {
     _connectvitiy.onConnectivityChanged.listen((ConnectivityResult event) {
-      print('event-$event');
-      if (event == ConnectivityResult.none)
-        updateHasConnection(false);
-      else
-        updateHasConnection(true);
+      event == ConnectivityResult.none ? updateHasConnection(false) : updateHasConnection(true);
     });
 
     _hasConnectionController.listen((value) {
-      print('- [NEW EVENT] hasConnectionController = $value');
+      logger.d('- [NEW EVENT] hasConnectionController = $value');
       if (!value) Alerter.showSnackBar(message: 'İnternet əlaqəsi itdi', positive: true);
     });
   }

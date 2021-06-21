@@ -24,7 +24,7 @@ class SimpleLogPrinter extends LogPrinter {
   @override
   List<String> log(LogEvent event) {
     // var color = PrettyPrinter.levelColors[event.level];
-    print(PrettyPrinter.doubleDivider);
+    if (kDebugMode) print(PrettyPrinter.doubleDivider);
     final emoji = _levelEmojis[event.level];
     final methodName = _getMethodName();
     final methodNameSection = printFunction ? '$methodName' : '';

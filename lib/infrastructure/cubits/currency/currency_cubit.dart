@@ -125,7 +125,6 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
         final currenciesHistory = _hiveService.getCachedCurrencieByDate(formattedDate);
         currenciesHistory.forEach(currencies.add);
-        currencies.removeAt(0);
       } else {
         logger.d('Getting from API');
 
@@ -145,8 +144,8 @@ class CurrencyCubit extends Cubit<CurrencyState> {
       await Future.delayed(const Duration(seconds: 1));
       emit(CurrencyNoInternetConnection());
     } catch (e, s) {
-      print(e);
-      print(s);
+      logger.d(e);
+      logger.d(s);
       emit(CurrencyAlert(message: '$e'));
     }
   }

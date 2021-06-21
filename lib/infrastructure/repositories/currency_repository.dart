@@ -1,3 +1,4 @@
+import 'package:app/infrastructure/helpers/my_logger.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' show utf8;
 import 'package:xml/xml.dart' as xml;
@@ -6,7 +7,7 @@ import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.d
 class CurrencyRepository {
   Future<List<CurrencyModel>> fetchCurrencies(String formattedDate) async {
     final uri = Uri.parse("https://www.cbar.az/currencies/$formattedDate.xml");
-    print('Endpoint: $uri');
+    logger.d('Endpoint: $uri');
     final response = await http.get(uri);
     final decoded = utf8.decode(response.bodyBytes);
 

@@ -23,7 +23,7 @@ class CachedCurrencyItem extends StatelessWidget {
           Spacer(),
           IconButton(
             onPressed: () => Navigator.of(context).pop(cachedDay),
-            icon: Icon(CupertinoIcons.goforward, color: CupertinoColors.activeBlue.withOpacity(.75)),
+            icon: Icon(CupertinoIcons.arrow_up_right_square, color: CupertinoColors.activeBlue.withOpacity(.75)),
           ),
           IconButton(
             onPressed: () => locator<HiveService>().removeCachedDataForDate(cachedDay),
