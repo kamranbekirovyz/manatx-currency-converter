@@ -1,6 +1,6 @@
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
-import 'package:app/presentation/widgets/custom/custom_radio_list_tile.dart';
+import 'package:app/presentation/widgets/unique/select_currency_modal.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -54,51 +54,8 @@ class TappableCurrencyTile extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (context) {
-        return GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: () => Navigator.of(context).pop(),
-          child: DraggableScrollableSheet(
-            initialChildSize: .75,
-            minChildSize: .5,
-            builder: (_, ScrollController controller) {
-              return CupertinoScrollbar(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
-                    color: Colors.white,
-                  ),
-                  child: ListView.builder(
-                    controller: controller,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: currencyCubit.currencies.length,
-                    itemBuilder: (context, posit) {
-                      final currency = currencyCubit.currencies.elementAt(posit);
-
-                      bool flag;
-                      if (toCurrency) {
-                        flag = currencyCubit.toCurrency.code == currency.code;
-                      } else {
-                        flag = currencyCubit.fromCurrency.code == currency.code;
-                      }
-                      return CustomRadioListTile(
-                        onTap: () {
-                          Navigator.of(context).pop();
-                          toCurrency ? currencyCubit.updateToCurrencyByIndex(posit) : currencyCubit.updateFromCurrencyByIndex(posit);
-                        },
-                        currency: currency,
-                        flag: flag,
-                      );
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
+      builder: (context) => SelectCurrencyModal(toCurrency: toCurrency, cubit: currencyCubit),
     );
   }
 }

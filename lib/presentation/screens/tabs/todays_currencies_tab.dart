@@ -1,6 +1,7 @@
 import 'package:app/infrastructure/cubits/currency/currency_cubit.dart';
 import 'package:app/infrastructure/hive_adapters/currency_model/currency_model.dart';
 import 'package:app/presentation/widgets/common/bottom_padding.dart';
+import 'package:app/presentation/widgets/common/keyboard_unfocus_area.dart';
 import 'package:app/presentation/widgets/items/currency_list_item.dart';
 import 'package:app/presentation/widgets/common/loading_indicator.dart';
 import 'package:app/utilities/constants/theme_globals.dart';
@@ -17,32 +18,33 @@ class _TodaysCurrenciesTabState extends State<TodaysCurrenciesTab> {
   late final CurrencyCubit _cubit;
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
     _cubit = BlocProvider.of<CurrencyCubit>(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: keyboard unfocus area
-    return Container(
-      color: primaryColor,
-      child: Column(
-        children: [
-          _buildSearchField(),
-          SizedBox(height: 8.0),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  _buildList(),
-                  BottomPadding(),
-                ],
+    return KeyboardUnfocusArea(
+      child: Container(
+        color: primaryColor,
+        child: Column(
+          children: [
+            _buildSearchField(),
+            SizedBox(height: 8.0),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    _buildList(),
+                    BottomPadding(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -62,7 +64,7 @@ class _TodaysCurrenciesTabState extends State<TodaysCurrenciesTab> {
 
               return CurrencyListItem(snapshot.data!.elementAt(position));
             },
-            separatorBuilder: (_, __) => SizedBox(height: 4.0), 
+            separatorBuilder: (_, __) => SizedBox(height: 4.0),
           );
         }
 

@@ -159,9 +159,9 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                buildNumberButton(1),
-                buildNumberButton(2),
-                buildNumberButton(3),
+                _buildNumberButton(1),
+                _buildNumberButton(2),
+                _buildNumberButton(3),
               ],
             ),
           ),
@@ -170,9 +170,9 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                buildNumberButton(4),
-                buildNumberButton(5),
-                buildNumberButton(6),
+                _buildNumberButton(4),
+                _buildNumberButton(5),
+                _buildNumberButton(6),
               ],
             ),
           ),
@@ -181,9 +181,9 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                buildNumberButton(7),
-                buildNumberButton(8),
-                buildNumberButton(9),
+                _buildNumberButton(7),
+                _buildNumberButton(8),
+                _buildNumberButton(9),
               ],
             ),
           ),
@@ -192,9 +192,9 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: <Widget>[
-                buildDotButton(),
-                buildNumberButton(0),
-                buildBackspaceButton(),
+                _buildDotButton(),
+                _buildNumberButton(0),
+                _buildBackspaceButton(),
               ],
             ),
           ),
@@ -203,7 +203,7 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
     );
   }
 
-  Widget buildBackspaceButton() {
+  Widget _buildBackspaceButton() {
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -227,12 +227,11 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
     );
   }
 
-  Widget buildDotButton() {
+  Widget _buildDotButton() {
     return Expanded(
       child: GestureDetector(
         onTap: () {
-          print('object');
-          // _currencyCubit.addTwoZerosToTypedValue();
+          _currencyCubit.addTwoZerosToTypedValue();
           playSound();
         },
         child: Container(
@@ -248,7 +247,7 @@ class _CurrencyCalculatorTabState extends State<CurrencyCalculatorTab> {
     );
   }
 
-  Widget buildNumberButton(int value) {
+  Widget _buildNumberButton(int value) {
     return Expanded(
       child: GestureDetector(
         onTap: () {

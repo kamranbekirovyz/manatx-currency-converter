@@ -19,9 +19,7 @@ class CurrencyCubit extends Cubit<CurrencyState> {
   CurrencyRepository get _currencyRepository => locator<CurrencyRepository>();
   String get formattedDate => DateFormat('dd.MM.yyyy').format(date);
 
-  final List<CurrencyModel> currencies = [
-    new CurrencyModel(code: 'AZN', value: 1.0, name: 'Azərbaycan Manatı', nominal: 1),
-  ];
+  final currencies = <CurrencyModel>[];
   static const max_input = 99999999999;
 
   final _fromCurrencyController = new BehaviorSubject<CurrencyModel>();
@@ -59,7 +57,14 @@ class CurrencyCubit extends Cubit<CurrencyState> {
 
   void addToTypedValue(int value) {
     if (typedValue < max_input) {
-      _typedValueController.add((typedValue * 10) + (value));
+      _typedValueController.add((typedValue * 10) + value);
+      autoUpdateConversionValue();
+    }
+  }
+
+  void addTwoZerosToTypedValue() {
+    if (typedValue < max_input) {
+      _typedValueController.add(typedValue * 100);
       autoUpdateConversionValue();
     }
   }
@@ -80,9 +85,7 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     _filteredListController.add(filtered);
   }
 
-  void autoUpdateConversionValue() {
-    _convertedValueController.add(typedValue / toCurrency.value! * fromCurrency.value! / fromCurrency.nominal!);
-  }
+  void autoUpdateConversionValue() => _convertedValueController.add(typedValue / toCurrency.value! * fromCurrency.value! / fromCurrency.nominal!);
 
   void swapCurrencies() {
     final temp = fromCurrency;
@@ -95,13 +98,9 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     autoUpdateConversionValue();
   }
 
-  void addTwoZerosToTypedValue() {
-    _typedValueController.add(typedValue * 100);
-    autoUpdateConversionValue();
-  }
-
   void updateTabIndex(int value) => _tabIndexController.add(value);
   void updateDate(DateTime value) => _dateController.add(value);
+  void addAznToCurrencies() => currencies.add(CurrencyModel(code: 'AZN', value: 1.0, name: 'Azərbaycan Manatı', nominal: 1));
 
   @override
   Future<void> close() {
@@ -119,17 +118,18 @@ class CurrencyCubit extends Cubit<CurrencyState> {
     try {
       emit(CurrencyLoading());
 
+      currencies.clear();
+      addAznToCurrencies();
       if (_hiveService.isDateCached(formattedDate)) {
-        simpleLogger.d('Getting cached data from Hive');
+        logger.d('Getting cached data from Hive');
 
         final currenciesHistory = _hiveService.getCachedCurrencieByDate(formattedDate);
         currenciesHistory.forEach(currencies.add);
         currencies.removeAt(0);
       } else {
-        simpleLogger.d('Getting from API');
+        logger.d('Getting from API');
 
         final response = await _currencyRepository.fetchCurrencies(formattedDate);
-
         await _hiveService.storeCurrenciesByDate(formattedDate, response);
         currencies.addAll(response);
       }

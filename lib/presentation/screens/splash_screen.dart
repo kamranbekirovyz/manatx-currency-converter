@@ -18,18 +18,21 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: primaryColor,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              SizedBox(height: 16.0 + MediaQuery.of(context).padding.top),
-              _buildConnectionIndicator(),
-            ],
-          ),
-          showRetryButton ? _buildRetry(context) : _buildLoading(),
-          _buildInternetConnectionAlert(),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                SizedBox(height: 16.0 + MediaQuery.of(context).padding.top),
+                _buildConnectionIndicator(),
+              ],
+            ),
+            showRetryButton ? _buildRetry(context) : _buildLoading(),
+            _buildInternetConnectionAlert(),
+          ],
+        ),
       ),
     );
   }
@@ -40,7 +43,7 @@ class SplashScreen extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            "Tətbiqin işləməsi üçün internetinizin açıq olması vacibdir.",
+            'Tətbiqin işləməsi üçün internetinizin açıq olması vacibdir.',
             textAlign: TextAlign.center,
             style: size16weight400.copyWith(color: Colors.white70),
           ),
@@ -54,7 +57,7 @@ class SplashScreen extends StatelessWidget {
     return Column(
       children: <Widget>[
         Text(
-          "Azərbaycan Mərkəzi Bankından məlumatlar toplanılır..",
+          'Azərbaycan Mərkəzi Bankından məlumatlar toplanılır..',
           textAlign: TextAlign.center,
           style: size17weight400.copyWith(color: Colors.white),
         ),

@@ -14,14 +14,12 @@ class HiveService {
     Hive.registerAdapter(CurrencyModelAdapter());
     currencyBox = await Hive.openBox('currency_box');
 
-    simpleLogger.i('HiveService initialized');
+    logger.i('HiveService initialized');
   }
 
-  Future<void> storeCurrenciesByDate(String date, List<CurrencyModel> value) async {
-    print('Caching date: $date');
-    return await currencyBox.put(date, value);
-  }
-  dynamic getCachedCurrencieByDate(String date) =>currencyBox.get(date, defaultValue: <CurrencyModel>[]);
+  Future<void> storeCurrenciesByDate(String date, List<CurrencyModel> value) async => await currencyBox.put(date, value);
+
+  dynamic getCachedCurrencieByDate(String date) => currencyBox.get(date, defaultValue: <CurrencyModel>[]);
   bool isDateCached(String date) => currencyBox.containsKey(date);
   Future<void> removeCachedDataForDate(String date) => currencyBox.delete(date);
 

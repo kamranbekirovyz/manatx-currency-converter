@@ -89,7 +89,7 @@ class ShouldLogFilter extends LogFilter {
   bool shouldLog(LogEvent event) => kDebugMode;
 }
 
-Logger logger(
+Logger getLogger(
   Type type, {
   bool printFunction = true,
   bool printStack = false,
@@ -105,13 +105,11 @@ Logger logger(
   );
 }
 
-Logger get simpleLogger {
-  return Logger(
-    filter: ShouldLogFilter(),
-    printer: SimpleLogPrinter(
-      printFunction: false,
-      printStack: false,
-    ),
-    output: ConsoleOutput(),
-  );
-}
+final logger = Logger(
+  filter: ShouldLogFilter(),
+  printer: SimpleLogPrinter(
+    printFunction: false,
+    printStack: false,
+  ),
+  output: ConsoleOutput(),
+);
